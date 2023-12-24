@@ -10,6 +10,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @author ryanw
+ */
 @RestController
 @RequestMapping("/user") // 给接口加前缀
 public class UserController {
@@ -22,7 +25,6 @@ public class UserController {
     // 更新或者新增, 在UserService里面定义了方法
     @PostMapping
     public Integer save(@RequestBody User user) {
-
         return userService.save(user);
     }
 

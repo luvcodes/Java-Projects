@@ -9,6 +9,7 @@
             <if test="username != null">
                 username = #{username},
             </if>
+            <!-- password不应该修改 -->
 <!--            <if test="password != null">-->
 <!--                password = #{password},-->
 <!--            </if>-->
