@@ -92,13 +92,13 @@
           </div>
 
           <el-table :data="tableData" border stripe :header-cell-class-name="headerBg">
-            <el-table-column prop="date" label="日期" width="140">
-            </el-table-column>
-            <el-table-column prop="name" label="姓名" width="120">
-            </el-table-column>
-            <el-table-column prop="address" label="地址">
-            </el-table-column>
-            <el-table-column label="操作">
+            <el-table-column prop="id" label="ID" width="80"></el-table-column>
+            <el-table-column prop="username" label="用户名" width="140"></el-table-column>
+            <el-table-column prop="nickname" label="昵称" width="120"></el-table-column>
+            <el-table-column prop="email" label="邮箱"></el-table-column>
+            <el-table-column prop="phone" label="电话"></el-table-column>
+            <el-table-column prop="address" label="地址"></el-table-column>
+            <el-table-column label="操作" width="200" align="center">
               <template slot-scope="scope">
                 <el-button type="success">Edit <i class="el-icon-edit"></i> </el-button>
                 <el-button type="danger">Delete <i class="el-icon-remove-outline"></i> </el-button>
@@ -107,11 +107,10 @@
           </el-table>
           <div style="padding: 10px 0">
             <el-pagination
-
                 :page-sizes="[5, 10, 15, 20]"
                 :page-size="10"
                 layout="total, sizes, prev, pager, next, jumper"
-                :total="400">
+                :total="total">
             </el-pagination>
           </div>
         </el-main>
@@ -125,13 +124,9 @@
 export default {
   name: 'HomeView',
   data() {
-    const item = {
-      date: '2016-05-02',
-      name: '王小虎',
-      address: '上海市普陀区金沙江路 1518 弄'
-    };
     return {
-      tableData: Array(10).fill(item),
+      tableData: [],
+      total: 0,
       collapseBtnClass: 'el-icon-s-fold',
       isCollapse: false,
       sideWidth: 200,
@@ -139,9 +134,19 @@ export default {
       searchName: '', // 用于名称搜索框的数据绑定
       searchEmail: '', // 用于电子邮件搜索框的数据绑定
       searchAddress: '', // 用于地址搜索框的数据绑定
+      headerBg: 'headerBg',
     }
   },
+  created() {
+    // 请求分页查询数据
+    fetch("http://localhost:9090/user/page?pageNum=1&pageSize=2").then(res => res.json()).then(res => {
+      console.log(res);
+      this.tableData = res.data;
+      this.total = res.total;
+    })
+  },
   methods: {
+    // 定义侧边栏折叠的方法
     collapse() {
       this.isCollapse = !this.isCollapse;
       if (this.isCollapse) {
