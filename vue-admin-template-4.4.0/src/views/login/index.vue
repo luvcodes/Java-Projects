@@ -176,8 +176,11 @@ $light_gray:#eee;
   min-height: 100%;
   width: 100%;
   background-color: $bg;
+  background-image: url(../../assets/bg.jpg);
+  background-position: center;
+  background-size: 100%;
+  background-repeat: no-repeat;
   overflow: hidden;
-
   display: flex;
   align-items: center;
 
@@ -185,8 +188,11 @@ $light_gray:#eee;
     position: relative;
     width: 520px;
     max-width: 100%;
-    padding: 35px 35px 10;
+    padding: 35px 35px 10px;
     margin: 0 auto;
+    background-color: #2d3a4b;
+    border-radius: 8px;
+    opacity: 0.9;
     overflow: hidden;
     border-radius: 8px;
   }
