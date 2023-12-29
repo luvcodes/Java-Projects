@@ -13,7 +13,7 @@
           <el-button @click="getUserList" type="primary" round icon="el-icon-search">查询</el-button>
         </el-col>
         <el-col :span="4" align="right">
-          <el-button type="primary" icon="el-icon-plus" circle />
+          <el-button @click="openEditUI" type="primary" icon="el-icon-plus" circle />
         </el-col>
       </el-row>
     </el-card>
@@ -48,6 +48,35 @@
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
     />
+
+    <!-- 用户信息编辑对话框 -->
+    <el-dialog @close="clearForm" :title="title" :visible.sync="dialogFormVisible">
+      <el-form :model="userForm" ref="userFormRef" :rules="rules">
+        <el-form-item label="用户名" prop="username" :label-width="formLabelWidth">
+          <el-input v-model="userForm.username" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="密码" prop="password" :label-width="formLabelWidth">
+          <el-input type="password" v-model="userForm.password" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="电话" :label-width="formLabelWidth">
+          <el-input v-model="userForm.phone" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="用户状态" :label-width="formLabelWidth">
+          <el-switch
+            v-model="userForm.status"
+            :active-value="1"
+            :inactive-value="0">
+          </el-switch>
+        </el-form-item>
+        <el-form-item label="电子邮件" prop="email" :label-width="formLabelWidth">
+          <el-input v-model="userForm.email" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="saveUser = false">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -56,19 +85,64 @@ import userApi from '@/api/userManage'
 
 export default {
   data() {
+    var checkEmail = (rule, value, callback) => {
+      var reg = /^[a-zA-Z0-9]+([-_.][a-zA-Z0-9]+)*@[a-zA-Z0-9]+([-_.][a-zA-Z0-9]+)*\.[a-z]{2,}$/
+      if (!reg.test(value)) {
+        return callback(new Error('邮箱格式错误'))
+      }
+    }
+
     return {
+      formLabelWidth: '130px',
+      userForm: {},
+      dialogFormVisible: false,
+      title: "",
       total: 0, // 总数据量
       searchModel: {
         pageNo: 1,
         pageSize: 10
       },
-      userList: []
+      userList: [],
+      rules: {
+        username: [
+          { required: true, message: '请输入用户名', trigger: 'blur' },
+          { min: 3, max: 50, message: '长度在 3 到 50 个字符', trigger: 'blur' }
+        ],
+        password: [
+          { required: true, message: '请输入登陆初始密码', trigger: 'blur' },
+          { min: 6, max: 16, message: '长度在 6 到 16 个字符', trigger: 'blur' }
+        ],
+        email: [
+          { required: true, message: '请输入电子邮件', trigger: 'blur' },
+          { validator: checkEmail, trigger: 'blur' }
+        ]
+      }
     }
   },
   created() {
     this.getUserList()
   },
   methods: {
+    saveUser() {
+      // 触发表单验证
+      this.$refs.userFormRef.validate((valid) => {
+        if (valid) {
+          // 提交请求给后台
+
+        } else {
+          console.log('error submit!!')
+          return false
+        }
+      })
+    },
+    clearForm() {
+      this.userForm = {}
+      this.$refs.userFormRef.clearValidate()
+    },
+    openEditUI() {
+      this.title = '新增用户'
+      this.dialogFormVisible = true
+    },
     handleSizeChange(pageSize) {
       this.searchModel.pageSize = pageSize
       this.getUserList()
@@ -91,5 +165,8 @@ export default {
 #search .el-input {
   width: 200px;
   margin-right: 10px;
+}
+.el-dialog .el-input {
+  width: 85%;
 }
 </style>
