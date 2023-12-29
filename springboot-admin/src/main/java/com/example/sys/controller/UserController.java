@@ -3,6 +3,7 @@ package com.example.sys.controller;
 import com.example.common.vo.Result;
 import com.example.sys.entity.User;
 import com.example.sys.service.IUserService;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.stereotype.Controller;
@@ -41,4 +42,22 @@ public class UserController {
 
         return Result.fail(20002, "用户名或密码错误");
     }
+
+    @GetMapping("/info")
+    public Result<?> getUserInfo(@Param("token") String token){
+        Map<String,Object> data = iUserService.getUserInfo(token);
+        if(data != null){
+            System.out.println("User details: " + data);
+            return Result.success(data);
+        }
+        return Result.fail(20003,"用户信息获取失败");
+    }
+
+    @PostMapping("/logout")
+    public Result<?> logout(@RequestHeader("X-Token") String token){
+        iUserService.logout(token);
+        return Result.success("注销成功");
+    }
+
+
 }
