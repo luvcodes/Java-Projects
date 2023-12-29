@@ -1,7 +1,14 @@
 package com.example.sys.controller;
 
+import com.example.sys.entity.User;
+import com.example.sys.service.IUserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * <p>
@@ -11,8 +18,14 @@ import org.springframework.stereotype.Controller;
  * @author ryanyang
  * @since 2023-12-29
  */
-@Controller
-@RequestMapping("/sys/user")
+@RestController
+@RequestMapping("/user")
 public class UserController {
+    @Autowired
+    private IUserService iUserService;
 
+    @GetMapping("/all")
+    public List<User> getALlUser() {
+        return iUserService.list();
+    }
 }
