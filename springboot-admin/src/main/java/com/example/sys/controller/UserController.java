@@ -1,14 +1,14 @@
 package com.example.sys.controller;
 
+import com.example.common.vo.Result;
 import com.example.sys.entity.User;
 import com.example.sys.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -25,7 +25,20 @@ public class UserController {
     private IUserService iUserService;
 
     @GetMapping("/all")
-    public List<User> getALlUser() {
-        return iUserService.list();
+    public Result<List<User>> getALlUser() {
+        List<User> users = iUserService.list();
+        return Result.success(users, "查询成功");
+    }
+
+    @PostMapping("/login")
+    public Result<Map<String, Object>> login(@RequestBody User user) {
+
+        Map<String, Object> data = iUserService.login(user);
+
+        if (data != null) {
+            return Result.success(data, "登录成功");
+        }
+
+        return Result.fail(20002, "用户名或密码错误");
     }
 }
