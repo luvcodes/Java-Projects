@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.common.vo.Result;
 import com.example.sys.entity.User;
 import com.example.sys.service.IUserService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.StringUtils;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,9 @@ import java.util.Map;
 public class UserController {
     @Autowired
     private IUserService iUserService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @GetMapping("/all")
     public Result<List<User>> getALlUser() {
@@ -76,6 +80,7 @@ public class UserController {
         // 第三个参数就是传进来的属性
         wrapper.eq(StringUtils.hasLength(username), User::getUsername, username);
         wrapper.eq(StringUtils.hasLength(phone), User::getPhone, phone);
+        wrapper.orderByDesc(User::getId);
 
         // 分页
         Page<User> page = new Page<>(pageNo, pageSize);
@@ -91,7 +96,27 @@ public class UserController {
 
     @PostMapping
     public Result<?> addUser(@RequestBody User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword())); // 加密
         iUserService.save(user);
         return Result.success("添加成功");
+    }
+
+    @PutMapping
+    public Result<?> updateUser(@RequestBody User user) {
+        user.setPassword(null);
+        iUserService.updateById(user);
+        return Result.success("修改成功");
+    }
+
+    @GetMapping("/{id}")
+    public Result<User> getUserById(@PathVariable("id") Integer id) {
+        User user = iUserService.getById(id);
+        return Result.success(user);
+    }
+
+    @DeleteMapping("/{id}")
+    public Result<User> removeUserById(@PathVariable("id") Integer id) {
+        iUserService.removeById(id);
+        return Result.success("删除成功");
     }
 }
