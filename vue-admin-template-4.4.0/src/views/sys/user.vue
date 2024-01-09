@@ -152,8 +152,8 @@ export default {
         this.$message({
           type: 'info',
           message: '已取消删除'
-        });
-      });
+        })
+      })
     },
     saveUser() {
       // 触发表单验证
